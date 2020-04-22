@@ -1,0 +1,9 @@
+name: Eclipse
+author: FreakzBoy
+version: 1.0
+
+main: me.freakzboy.main.Eclipse
+
+commands:
+  eclipse:
+    description: Main Command for Eclipse Anticheat
