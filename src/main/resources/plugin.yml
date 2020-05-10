@@ -1,8 +1,8 @@
 name: Eclipse
-author: FreakzBoy
+author: Kenchh
 version: 1.0
 
-main: me.freakzboy.main.Eclipse
+main: me.kenchh.main.Eclipse
 
 commands:
   eclipse:
