@@ -4,9 +4,7 @@ import me.kenchh.checks.cheatchecks.movement.Fly;
 import me.kenchh.checks.cheatchecks.movement.GroundSpoof;
 import me.kenchh.checks.cheatchecks.movement.Motion;
 import me.kenchh.checks.cheatchecks.movement.Speed;
-import me.kenchh.customchecks.ironhook.IronHook;
 import me.kenchh.customchecks.leap.Leap;
-import me.kenchh.customchecks.tornado.Tornado;
 
 import java.util.ArrayList;
 
@@ -24,8 +22,6 @@ public class CheckManager {
 
     public static void initCheckModes() {
         checkModes.add(new Leap());
-        checkModes.add(new Tornado());
-        checkModes.add(new IronHook());
     }
 
     public static Check getCheck(String name) {

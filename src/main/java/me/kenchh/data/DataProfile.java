@@ -7,12 +7,16 @@ import org.bukkit.entity.Player;
 
 public class DataProfile {
 
+    /**
+     *  Basically a "player-cache", where all data is stored and accessed for checks.
+     */
+
     public Player player;
 
     public boolean graceperiod = true;
 
     public CheckMode currentCheckMode = null;
-    public int checkModeResetCooldown = 20;
+    public int checkModeDuration = 20;
 
     public int airticks = 0; /** Time in air */
 
@@ -35,6 +39,7 @@ public class DataProfile {
         this.player = player;
     }
 
+    /** Custom-made onGround check */
     public boolean onGround() {
         if(LocationUtils.checkCustomOnGround(player)) {
             airticks = 0;
@@ -58,17 +63,13 @@ public class DataProfile {
         }
     }
 
-    public void updateCheckModeResetCoolDown() {
-        if(checkModeResetCooldown <= 0) {
-            checkModeResetCooldown = 0;
+    public void updatecheckModeDuration() {
+        if(checkModeDuration <= 0) {
+            checkModeDuration = 0;
             currentCheckMode = null;
         } else {
-            checkModeResetCooldown--;
+            checkModeDuration--;
         }
-    }
-
-    public void recentlyTeleported() {
-
     }
 
 }

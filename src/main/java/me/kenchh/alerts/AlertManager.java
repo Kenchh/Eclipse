@@ -43,9 +43,8 @@ public class AlertManager {
 
     public static void alert(Player player, Fail fail, String debugmsg) {
 
-        if(cooldown.containsKey(player.getName())) {
+        if(cooldown.containsKey(player.getName()))
             return;
-        }
 
         sendAlert(player, fail);
         sendDebugMessage("ping: " + ConnectionUtils.getPing(player) + "ms " + debugmsg);

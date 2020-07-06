@@ -11,7 +11,7 @@ public class API {
         DataProfile dp = DataProfileManager.getDataProfile(p);
         dp.currentCheckMode = CheckManager.getCheckModeByName(checkmode);
         dp.airticks = 0;
-        dp.checkModeResetCooldown = (int) (seconds * 20);
+        dp.checkModeDuration = (int) (seconds * 20);
     }
 
     public void setAirTicks(Player p, int value) {

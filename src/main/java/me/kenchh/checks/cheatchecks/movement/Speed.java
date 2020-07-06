@@ -35,8 +35,6 @@ public class Speed extends Check implements Movement {
 
     @Override
     public void move(PlayerMoveEvent e, DataProfile dp, Player p, double deltaY, double deltaH, double deltadeltaY, double deltadeltaH) {
-        Location from = e.getFrom();
-        Location to = e.getTo();
 
         if(p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) {
             return;
@@ -63,16 +61,13 @@ public class Speed extends Check implements Movement {
             }
         }
 
+        /* Causes false flags as it is now -> needs more optimisation */
         /** B: */
+        /*
         if(p.isOnGround() && dp.vanillaOnGroundTicks >= 3 && deltaY == 0) {
             if(deltaH >= 0.325 + 0.325*0.2*speedboost) {
                 fail(p, FailType.B, "dH: " + deltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
             }
-        }
-
-        /*
-        if((dp.lastDeltaDeltaH >= -0.01 && dp.lastDeltaDeltaH <= 0.01) && deltadeltaH > dp.lastDeltaDeltaH && p.isSprinting()) {
-            fail(p, FailType.B, "ddH: " + deltadeltaH + " lddH: " + dp.lastDeltaDeltaH);
         }
         */
 

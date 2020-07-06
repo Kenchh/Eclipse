@@ -14,15 +14,32 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class MoveEvent implements Listener {
 
+    /** Resets the last values to the teleported locations. #
+     *  If this is not done, then it the difference will be too huge and cause false flags.
+     */
     @EventHandler
     public void onTP(PlayerTeleportEvent e) {
         DataProfile dp = DataProfileManager.getDataProfile(e.getPlayer());
-        /* TODO TELEPORT TICKS */
+
         dp.airticks = 0;
         dp.lastLocationMillis = System.currentTimeMillis();
         dp.lastLocation = e.getTo();
         dp.lastLocationOnGround = e.getPlayer().getLocation();
     }
+
+    /**
+     * EXPLANATION
+     *
+     * Delta stands for difference.
+     *
+     * Meaning, that
+     * deltaY -> is the difference between the last player Y Coordinate and the current one.
+     *
+     * deltaH -> is the difference between the last player X AND Z Coordinate and the current one. (Which is basically the horizontal distance)
+     *
+     * deltaDeltaY/H -> is the difference between last deltaY/H and current deltaY/H. (Difference in velocity)
+     *          (In science, you would call this acceleration - In math, derivative of the velocity)
+     */
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
@@ -53,7 +70,8 @@ public class MoveEvent implements Listener {
             }
         }
 
-        /** ------ All last variables after this line ------ */
+        /** ------ All "last" variables after this line ------ */
+        /** Setting the current values as the last ones, to test in the next upcoming tick in this MoveEvent. */
 
         dp.lastVanillaOnGround = e.getPlayer().isOnGround();
 
