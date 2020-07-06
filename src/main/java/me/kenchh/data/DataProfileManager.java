@@ -1,6 +1,7 @@
 package me.kenchh.data;
 
 import me.kenchh.main.Eclipse;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -9,12 +10,19 @@ public class DataProfileManager {
 
     public static ArrayList<DataProfile> dataProfiles = new ArrayList<DataProfile>();
 
+    public static final long graceperiod = 3 * 20;
+
     public static void addDataProfile(Player player) {
         if(hasDataProfile(player) == false) {
             Eclipse.getInstance().getPacketInjector().addPlayer(player);
             dataProfiles.add(new DataProfile(player));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Eclipse.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    DataProfileManager.getDataProfile(player).graceperiod = false;
+                }
+            }, graceperiod);
         }
-
     }
 
     public static void removeDataProfile(Player player) {
@@ -40,7 +48,6 @@ public class DataProfileManager {
                 return dp;
             }
         }
-
         return null;
     }
 

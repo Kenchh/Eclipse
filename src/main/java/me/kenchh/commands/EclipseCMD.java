@@ -25,7 +25,7 @@ public class EclipseCMD implements CommandExecutor {
             }
 
             if(args.length == 0) {
-                p.sendMessage(Eclipse.prefix + "by FreakzBoy - Type " + ChatColor.GOLD + "/eclipse help" + ChatColor.YELLOW + " for help");
+                p.sendMessage(Eclipse.prefix + "by Kenchh - Type " + ChatColor.GOLD + "/eclipse help" + ChatColor.YELLOW + " for help");
                 return true;
             }
 

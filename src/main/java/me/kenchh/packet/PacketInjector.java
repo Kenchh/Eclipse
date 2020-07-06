@@ -12,7 +12,7 @@ public class PacketInjector {
     private Field PlayerConnection_networkManager;
 
     private Class<?> NetworkManager;
-    private Field k;
+    private Field channel;
     private Field m;
 
     public PacketInjector() {
@@ -23,7 +23,7 @@ public class PacketInjector {
             PlayerConnection_networkManager = Reflection.getField(PlayerConnection, "networkManager");
 
             NetworkManager = Reflection.getClass("{nms}.NetworkManager");
-            k = Reflection.getField(NetworkManager, "k");
+            channel = Reflection.getField(NetworkManager, "channel");
             m = Reflection.getField(NetworkManager, "m");
         } catch (Throwable t) {
             t.printStackTrace();
@@ -60,7 +60,7 @@ public class PacketInjector {
     private Channel getChannel(Object networkManager) {
         Channel ch = null;
         try {
-            ch = Reflection.getFieldValue(k, networkManager);
+            ch = Reflection.getFieldValue(channel, networkManager);
         } catch (Exception e) {
             ch = Reflection.getFieldValue(m, networkManager);
         }

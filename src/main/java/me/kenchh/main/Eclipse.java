@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Eclipse extends JavaPlugin {
 
-    public static String prefix = new String(ChatColor.YELLOW + "[" + ChatColor.GOLD + ChatColor.BOLD + "Eclipse" + ChatColor.YELLOW + "] " + ChatColor.YELLOW);
+    public static String prefix = ChatColor.GOLD + "" + ChatColor.BOLD + "ECLIPSE > " + ChatColor.RESET + ChatColor.GRAY;
     private static Eclipse instance;
 
     private static PacketInjector injector;
@@ -57,7 +57,7 @@ public class Eclipse extends JavaPlugin {
 
                 AlertManager.updateCooldown();
                 for(DataProfile dp : DataProfileManager.dataProfiles) {
-                    dp.updateAirTicks();
+                    dp.updateCheckModeResetCoolDown();
                 }
             }
         }, 1L, 1L);

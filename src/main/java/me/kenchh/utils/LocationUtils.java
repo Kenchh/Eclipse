@@ -75,19 +75,50 @@ public class LocationUtils {
     }
 
     public static boolean isAir(Location loc) {
-        if(loc.getBlock().getType().isSolid() == false && loc.getBlock().isLiquid() == false && loc.getBlock().getType() != Material.LADDER && loc.getBlock().getType() != Material.VINE) {
+        Material type = loc.getBlock().getType();
+        if(type.isSolid() == false && loc.getBlock().isLiquid() == false &&
+                type != Material.LADDER && type != Material.VINE && type != Material.WEB && type != Material.SNOW && type != Material.CARPET) {
             return true;
         }
         return false;
     }
 
     public static boolean isOnLiftBlocks(Player p) {
-        for(Block b : LocationUtils.getBlocksAround(p, 1)) {
+        for(Block b : LocationUtils.getBlocksAround(p, 0.75)) {
             if(LocationUtils.liftingBlocks.contains(b.getType())) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static boolean couldBeOnGround(Player p) {
+
+        double blockY = p.getLocation().getBlockY();
+        double y = p.getLocation().getY() - blockY;
+
+        for(double i=0; i<=1; i+=0.125) {
+            if(y == i || y == 0.0625) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Location highestLocation(Player player) {
+        double blockY = player.getLocation().getBlockY();
+
+        Location tplocation = null;
+        for (int i = (int) blockY; i > 1; i--) {
+            Location loc = new Location(player.getWorld(), player.getLocation().getX(), i, player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+
+            if (loc.getBlock().getType().isSolid()) {
+                tplocation = new Location(player.getWorld(), player.getLocation().getX(), i + 1.5, player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+                break;
+            }
+        }
+
+        return tplocation;
     }
 
 }

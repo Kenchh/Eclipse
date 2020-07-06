@@ -5,10 +5,12 @@ import me.kenchh.checks.fails.Fail;
 import me.kenchh.checks.fails.FailProfile;
 import me.kenchh.checks.fails.FailProfileManager;
 import me.kenchh.checks.fails.FailType;
+import me.kenchh.data.DataProfileManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-public class Check implements Listener {
+public abstract class Check implements Listener {
 
     public String name;
     public CheatCategory cheat;
@@ -27,11 +29,21 @@ public class Check implements Listener {
         faildebug = !faildebug;
     }
 
-    public void fail(Player player, FailType type) {
-        fail(player, 1, type);
+    public void fail(Player player, FailType type, String debugmsg)  {
+        fail(player, 1, type, debugmsg);
     }
 
-    public void fail(Player player, int VL, FailType type) {
+    public void fail(Player player, int VL, FailType type, String debugmsg) {
+
+        if(DataProfileManager.getDataProfile(player).graceperiod) {
+            return;
+        }
+
+        Check c = this;
+
+        if(CheckManager.isCustom(this)) {
+            c = CheckManager.getParentCheck(this);
+        }
 
         FailProfileManager.addFailProfile(player);
         FailProfile fp = FailProfileManager.getFailProfile(player);
@@ -41,7 +53,7 @@ public class Check implements Listener {
         Fail failtoremove = null;
 
         for(Fail f : fp.fails) {
-            if(f.check == this) {
+            if(f.check == c) {
                 fVL = f.VL;
                 failtoremove = f;
             }
@@ -51,10 +63,10 @@ public class Check implements Listener {
             fp.fails.remove(failtoremove);
         }
 
-        Fail newfail = new Fail(this, fVL + VL, type);
+        Fail newfail = new Fail(c, fVL + VL, type);
 
         fp.addFail(newfail);
-        AlertManager.alert(player, newfail);
+        AlertManager.alert(player, newfail, debugmsg);
 
     }
 

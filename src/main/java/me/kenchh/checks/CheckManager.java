@@ -1,10 +1,12 @@
 package me.kenchh.checks;
 
-import me.kenchh.checks.cheatchecks.FabricatedMovement;
-import me.kenchh.checks.cheatchecks.Fly;
-import me.kenchh.checks.cheatchecks.GroundSpoof;
-import me.kenchh.checks.cheatchecks.Motion;
-import me.kenchh.checks.checkmodes.Leap;
+import me.kenchh.checks.cheatchecks.movement.Fly;
+import me.kenchh.checks.cheatchecks.movement.GroundSpoof;
+import me.kenchh.checks.cheatchecks.movement.Motion;
+import me.kenchh.checks.cheatchecks.movement.Speed;
+import me.kenchh.customchecks.ironhook.IronHook;
+import me.kenchh.customchecks.leap.Leap;
+import me.kenchh.customchecks.tornado.Tornado;
 
 import java.util.ArrayList;
 
@@ -17,11 +19,13 @@ public class CheckManager {
         checks.add(new Fly());
         checks.add(new Motion());
         checks.add(new GroundSpoof());
-        checks.add(new FabricatedMovement());
+        checks.add(new Speed());
     }
 
     public static void initCheckModes() {
         checkModes.add(new Leap());
+        checkModes.add(new Tornado());
+        checkModes.add(new IronHook());
     }
 
     public static Check getCheck(String name) {
@@ -40,6 +44,25 @@ public class CheckManager {
             }
         }
         return null;
+    }
+
+    public static Check getParentCheck(Check customcheck) {
+
+        for(Check c : checks) {
+            String cname = c.getClass().getSimpleName();
+
+            if(customcheck.getClass().getSuperclass().getSimpleName().equalsIgnoreCase(cname)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isCustom(Check customcheck) {
+        if(getParentCheck(customcheck) != null) {
+            return true;
+        }
+        return false;
     }
 
 }
