@@ -1,5 +1,6 @@
 package me.kenchh.checks;
 
+import javafx.scene.control.Alert;
 import me.kenchh.alerts.AlertManager;
 import me.kenchh.checks.fails.Fail;
 import me.kenchh.checks.fails.FailProfile;
@@ -34,6 +35,8 @@ public abstract class Check implements Listener {
         fail(player, 1, type, debugmsg);
     }
 
+    public int punishThreshold = 20;
+
     /** Used to add a specific amount of VL */
     public void fail(Player player, int VL, FailType type, String debugmsg) {
 
@@ -50,13 +53,13 @@ public abstract class Check implements Listener {
         FailProfileManager.addFailProfile(player);
         FailProfile fp = FailProfileManager.getFailProfile(player);
 
-        int fVL = 0;
+        int lastVL = 0;
 
         Fail failtoremove = null;
 
         for(Fail f : fp.fails) {
             if(f.check == c) {
-                fVL = f.VL;
+                lastVL = f.VL;
                 failtoremove = f;
             }
         }
@@ -65,11 +68,22 @@ public abstract class Check implements Listener {
             fp.fails.remove(failtoremove);
         }
 
-        Fail newfail = new Fail(c, fVL + VL, type);
-
+        Fail newfail = new Fail(c, lastVL + VL, type);
         fp.addFail(newfail);
-        AlertManager.alert(player, newfail, debugmsg);
 
+        if(newfail.VL < punishThreshold) {
+            AlertManager.alert(player, newfail, debugmsg);
+        } else {
+            /** punish */
+            punish(player, c);
+            AlertManager.alertKick(player, newfail);
+        }
+
+    }
+
+    /** Put here what you want to happen, if a player has failed to many times. */
+    private void punish(Player player, Check check) {
+        player.kickPlayer("You have been kicked for failing " + check.name + " too many times!");
     }
 
     /** Checks, if a player is allowed to retrieve debug info about checks. */

@@ -52,6 +52,16 @@ public class AlertManager {
 
     }
 
+    public static void alertKick(Player player, Fail fail) {
+
+        if(cooldown.containsKey(player.getName()))
+            return;
+
+        sendKickAlert(player, fail);
+        cooldown.put(player.getName(), System.currentTimeMillis());
+
+    }
+
     public static void sendDebugMessage(String debugmsg) {
 
         for(Player p : Bukkit.getOnlinePlayers()) {
@@ -92,6 +102,20 @@ public class AlertManager {
         } else {
             Bukkit.getConsoleSender().sendMessage(msg + messageCM);
         }
+    }
+
+    public static void sendKickAlert(Player player, Fail fail) {
+
+        /* Player Staff Message */
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            if(p.hasPermission("eclipse.alerts")) {
+                p.sendMessage(ChatColor.RED + player.getName() + " has been removed for failing " + fail.check.name + " too many times!");
+            }
+        }
+
+        /* Console Print */
+        Bukkit.getConsoleSender().sendMessage(player.getName() + " has been removed for failing " + fail.check.name + " too many times!");
+
     }
 
 }
