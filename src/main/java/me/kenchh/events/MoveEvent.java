@@ -55,6 +55,7 @@ public class MoveEvent implements Listener {
         DataProfile dp = DataProfileManager.getDataProfile(e.getPlayer());
 
         dp.updateAirTicks();
+        dp.updateCustomAirTicks();
         dp.updateVanillaOnGroundTicks();
 
         double deltadeltaY = MathUtils.round(deltaY - dp.lastDeltaY);

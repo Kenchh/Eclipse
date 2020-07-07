@@ -19,9 +19,12 @@ public class DataProfile {
     public int checkModeDuration = 20;
 
     public int airticks = 0; /** Time in air */
+    public int cAirticks = 0; /** Time in air - Custom */
 
     public int vanillaOnGroundTicks = 0;
     public boolean lastVanillaOnGround;
+
+    public int groundspoofticks;
 
     public double lastDeltaY = 0;
     public double lastDeltaH = 0;
@@ -42,16 +45,24 @@ public class DataProfile {
     /** Custom-made onGround check */
     public boolean onGround() {
         if(LocationUtils.checkCustomOnGround(player)) {
-            airticks = 0;
+            cAirticks = 0;
         }
         return LocationUtils.checkCustomOnGround(player);
     }
 
     public void updateAirTicks() {
-        if(LocationUtils.checkCustomOnGround(player) == false) {
+        if(!player.isOnGround()) {
             airticks++;
         } else {
             airticks = 0;
+        }
+    }
+
+    public void updateCustomAirTicks() {
+        if(!LocationUtils.checkCustomOnGround(player)) {
+            cAirticks++;
+        } else {
+            cAirticks = 0;
         }
     }
 

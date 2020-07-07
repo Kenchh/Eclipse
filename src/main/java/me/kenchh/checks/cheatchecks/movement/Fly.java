@@ -55,7 +55,11 @@ public class Fly extends Check implements Movement {
             }
         }
 
-        if(dp.onGround() == false) {
+        if(!dp.onGround() || !p.isOnGround()) {
+
+            if(!dp.onGround() && p.isOnGround()) {
+                dp.airticks = dp.cAirticks;
+            }
 
             /** B: Non complex code, just flags if movement is very rapid and unusual. */
             if (deltaY >= 0.5 + jumpboost/10 && dp.airticks >= 3) {
@@ -121,7 +125,6 @@ public class Fly extends Check implements Movement {
             p.sendMessage(Eclipse.prefix + "aT: " + dp.airticks);
             p.sendMessage(Eclipse.prefix + "dY: " + deltaY);
             p.sendMessage(Eclipse.prefix + "ddY: " + deltadeltaY);
-            p.sendMessage(Eclipse.prefix + "coG: " + dp.onGround());
         }
     }
 

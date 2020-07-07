@@ -43,7 +43,7 @@ public class GroundSpoof extends Check implements Movement {
         }
 
         /** A: When custom on Ground check and isOnGround doesnt match for a period of time */
-        if(p.isOnGround() != dp.onGround() && LocationUtils.blocksAroundAir(p) && dp.airticks > 7 && LocationUtils.couldBeOnGround(p) == false) {
+        if(p.isOnGround() != dp.onGround() && LocationUtils.blocksAroundAir(p) && dp.cAirticks > 7 && LocationUtils.couldBeOnGround(p) == false) {
             fail(p, FailType.A, "oG: " + p.isOnGround() + " coG: " + dp.onGround());
         }
 
@@ -66,9 +66,23 @@ public class GroundSpoof extends Check implements Movement {
             }
         }
 
+        /** When the player seems to be sending onGround packets but still has deltaY -> almost impossible to reproduce
+         * Exceptions: Steps/Stairs, Teleportations & Ladders/Vines
+         * */
+
+        if(p.isOnGround() && deltadeltaY != 0 && p.getLocation().getBlock().getType() != Material.LADDER && p.getLocation().getBlock().getType() != Material.VINE) {
+            if(dp.groundspoofticks >= 15) {
+                fail(p, FailType.C, "gsT: " + dp.groundspoofticks);
+                dp.groundspoofticks = 0;
+            } else {
+                dp.groundspoofticks++;
+            }
+        } else {
+            dp.groundspoofticks = 0;
+        }
+
         if(checkDebugAllowed(p)) {
             p.sendMessage(Eclipse.prefix + "oG: " + p.isOnGround());
-            p.sendMessage(Eclipse.prefix + "coG: " + dp.onGround());
             p.sendMessage(Eclipse.prefix + "wA: " + listenForWrongAlgorithm.get(p.getUniqueId()));
         }
     }
