@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class MoveEvent implements Listener {
 
-    /** Resets the last values to the teleported locations. #
+    /** Resets the last values to the teleported locations.
      *  If this is not done, then it the difference will be too huge and cause false flags.
      */
     @EventHandler
@@ -70,8 +70,10 @@ public class MoveEvent implements Listener {
             }
         }
 
-        /** ------ All "last" variables after this line ------ */
-        /** Setting the current values as the last ones, to test in the next upcoming tick in this MoveEvent. */
+        /**
+          ------ All "last" variables after this line ------
+                Setting the current values as the last ones, to test in the next upcoming tick in this MoveEvent.
+         */
 
         dp.lastVanillaOnGround = e.getPlayer().isOnGround();
 

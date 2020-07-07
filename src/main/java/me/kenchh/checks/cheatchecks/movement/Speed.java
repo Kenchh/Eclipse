@@ -33,6 +33,10 @@ public class Speed extends Check implements Movement {
 
     }
 
+    /**
+     * This check is still EXPERIMENTAL and can cause false flags.
+     */
+
     @Override
     public void move(PlayerMoveEvent e, DataProfile dp, Player p, double deltaY, double deltaH, double deltadeltaY, double deltadeltaH) {
 

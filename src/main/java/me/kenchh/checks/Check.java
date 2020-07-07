@@ -29,10 +29,12 @@ public abstract class Check implements Listener {
         faildebug = !faildebug;
     }
 
+    /** Used to add +1 VL to a player fail. */
     public void fail(Player player, FailType type, String debugmsg)  {
         fail(player, 1, type, debugmsg);
     }
 
+    /** Used to add a specific amount of VL */
     public void fail(Player player, int VL, FailType type, String debugmsg) {
 
         if(DataProfileManager.getDataProfile(player).graceperiod) {
@@ -70,17 +72,9 @@ public abstract class Check implements Listener {
 
     }
 
+    /** Checks, if a player is allowed to retrieve debug info about checks. */
     public boolean checkDebugAllowed(Player player) {
         if(checkdebug == true) {
-            if (player.hasPermission("eclipse.debug")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean failDebugAllowed(Player player) {
-        if(faildebug == true) {
             if (player.hasPermission("eclipse.debug")) {
                 return true;
             }
