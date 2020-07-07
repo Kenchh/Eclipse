@@ -26,6 +26,7 @@ public class AlertManager {
             Player p = Bukkit.getPlayer(pname);
             if(p == null) {
                 AlertManager.cooldown.remove(pname);
+                continue;
             }
 
             long then = AlertManager.cooldown.get(pname);

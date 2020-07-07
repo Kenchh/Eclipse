@@ -33,10 +33,6 @@ public class Speed extends Check implements Movement {
 
     }
 
-    /**
-     * This check is still EXPERIMENTAL and can cause false flags.
-     */
-
     @Override
     public void move(PlayerMoveEvent e, DataProfile dp, Player p, double deltaY, double deltaH, double deltadeltaY, double deltadeltaH) {
 
@@ -54,7 +50,10 @@ public class Speed extends Check implements Movement {
             }
         }
 
-        /** A: */
+        /**
+         * These checks are EXPERIMENTAL and are currently false flagging.
+         */
+
         if(p.isOnGround() && dp.vanillaOnGroundTicks >= 3) {
             if (deltadeltaH >= 0.281 + 0.281*0.2*speedboost) {
                 fail(p, FailType.A, "ddH: " + deltadeltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
@@ -65,15 +64,14 @@ public class Speed extends Check implements Movement {
             }
         }
 
-        /* Causes false flags as it is now -> needs more optimisation */
+
         /** B: */
-        /*
         if(p.isOnGround() && dp.vanillaOnGroundTicks >= 3 && deltaY == 0) {
             if(deltaH >= 0.325 + 0.325*0.2*speedboost) {
                 fail(p, FailType.B, "dH: " + deltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
             }
         }
-        */
+
 
         if(checkDebugAllowed(p)) {
             p.sendMessage(Eclipse.prefix + "dH: " + deltaH);
