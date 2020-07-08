@@ -58,6 +58,7 @@ public class Eclipse extends JavaPlugin {
                 AlertManager.updateCooldown();
                 for(DataProfile dp : DataProfileManager.dataProfiles) {
                     dp.updatecheckModeDuration();
+                    dp.updateIgnoreCheckDuration();
                 }
             }
         }, 1L, 1L);

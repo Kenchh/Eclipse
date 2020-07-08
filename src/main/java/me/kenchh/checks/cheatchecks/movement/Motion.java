@@ -64,8 +64,8 @@ public class Motion extends Check implements Movement {
             }
         }
 
-        if (deltaY > 0.45D + jumpboost/10 && dp.airticks > B_maxairticks + jumpboost) {
-            fail(p, FailType.B, "dY: " + deltaY + " " + "aT: " + dp.airticks);
+        if (deltaY > 0.45D + jumpboost/10 && dp.cAirticks > B_maxairticks + jumpboost) {
+            fail(p, FailType.B, "dY: " + deltaY + " " + "aT: " + dp.cAirticks);
         }
 
         if(checkDebugAllowed(p)) {

@@ -14,6 +14,10 @@ public class API {
         dp.checkModeDuration = (int) (seconds * 20);
     }
 
+    public void ignoreCheck(Player p, String check, double seconds) {
+        DataProfileManager.getDataProfile(p).ignoredChecks.put(CheckManager.getCheck(check), seconds*20);
+    }
+
     public void setAirTicks(Player p, int value) {
         DataProfile dp = DataProfileManager.getDataProfile(p);
         if(value < 0) return;

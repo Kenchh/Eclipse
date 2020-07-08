@@ -1,9 +1,12 @@
 package me.kenchh.data;
 
+import me.kenchh.checks.Check;
 import me.kenchh.checks.CheckMode;
 import me.kenchh.utils.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class DataProfile {
 
@@ -37,6 +40,8 @@ public class DataProfile {
     public Location lastLocationOnGround;
 
     public int speedticks = 0;
+
+    public HashMap<Check, Double> ignoredChecks = new HashMap<>();
 
     public DataProfile(Player player) {
         this.player = player;
@@ -80,6 +85,17 @@ public class DataProfile {
             currentCheckMode = null;
         } else {
             checkModeDuration--;
+        }
+    }
+
+    public void updateIgnoreCheckDuration() {
+        for(Check c : ignoredChecks.keySet()) {
+            double seconds = ignoredChecks.get(c);
+            if(seconds > 0) {
+                ignoredChecks.replace(c, seconds - 1);
+            } else {
+                ignoredChecks.remove(c);
+            }
         }
     }
 

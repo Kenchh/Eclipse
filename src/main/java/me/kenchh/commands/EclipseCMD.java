@@ -55,6 +55,11 @@ public class EclipseCMD implements CommandExecutor {
                     return true;
                 }
 
+                if(args[0].equalsIgnoreCase("ignoreCheck")) {
+                    p.sendMessage(ChatColor.RED  + "Usage: /eclipse ignorecheck <player> <check> <seconds>");
+                    return true;
+                }
+
             }
 
             if(args.length == 2) {
@@ -112,9 +117,14 @@ public class EclipseCMD implements CommandExecutor {
                     }
                     return true;
                 }
+
+                if(args[0].equalsIgnoreCase("ignoreCheck")) {
+                    p.sendMessage(ChatColor.RED  + "Usage: /eclipse ignorecheck <player> <check> <seconds>");
+                    return true;
+                }
             }
 
-            if(args.length >= 3) {
+            if(args.length == 3) {
                 if(args[0].equalsIgnoreCase("switchCheckMode") || args[0].equalsIgnoreCase("setCheckMode")) {
                     Player ps = Bukkit.getPlayer(args[1]);
 
@@ -131,6 +141,31 @@ public class EclipseCMD implements CommandExecutor {
                     }
                     return true;
                 }
+
+                if(args[0].equalsIgnoreCase("ignoreCheck")) {
+                    p.sendMessage(ChatColor.RED  + "Usage: /eclipse ignorecheck <player> <check> <seconds>");
+                    return true;
+                }
+
+            }
+
+            if(args.length >= 4) {
+
+                if(args[0].equalsIgnoreCase("ignoreCheck")) {
+                    Player ps = Bukkit.getPlayer(args[1]);
+                    double seconds = Integer.parseInt(args[3]);
+                    if(ps != null) {
+                        Eclipse.getInstance().api.ignoreCheck(p, args[2], seconds);
+                        p.sendMessage(Eclipse.prefix + "Ignoring now "
+                                + ChatColor.GOLD + CheckManager.getCheck(args[2]).name
+                                + ChatColor.YELLOW + " for " + ChatColor.GOLD + ps.getName()
+                                + ChatColor.YELLOW + " for "
+                                + ChatColor.GOLD + seconds + " seconds.");
+                    } else {
+                        p.sendMessage(ChatColor.RED + "That player is not online!");
+                    }
+                    return true;
+                }
             }
         }
 
@@ -139,11 +174,10 @@ public class EclipseCMD implements CommandExecutor {
 
     public void help(Player p) {
         p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse check <player> " + ChatColor.YELLOW + "- Lookup a players VL for all checks.");
-        p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse setVL <player> <VL> " + ChatColor.YELLOW + "- Set the VL of a player.");
-        p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse resetVL <player> " + ChatColor.YELLOW + "- Reset the VL of a player.");
         p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse checkDebug <check> " + ChatColor.YELLOW + "- Toggle receiving debug-data during a check.");
         p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse failDebug <check> " + ChatColor.YELLOW + "- Toggle receiving debug-data when failing a check.");
         p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse setCheckMode <player> <check> " + ChatColor.YELLOW + "- Switch the check-mode for a player.");
+        p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse ignorecheck <player> <check> <duration> " + ChatColor.YELLOW + "- Make a player ignore a specific check.");
     }
 
 }

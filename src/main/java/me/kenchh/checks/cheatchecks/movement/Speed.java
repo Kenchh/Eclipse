@@ -7,9 +7,7 @@ import me.kenchh.checks.interfaces.Movement;
 import me.kenchh.data.DataProfile;
 import me.kenchh.data.DataProfileManager;
 import me.kenchh.main.Eclipse;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
@@ -51,15 +49,15 @@ public class Speed extends Check implements Movement {
         }
 
         /**
-         * These checks are EXPERIMENTAL and are currently false flagging.
+         * These checks are EXPERIMENTAL and might false flag.
          */
 
         if(p.isOnGround() && dp.vanillaOnGroundTicks >= 3) {
-            if (deltadeltaH >= 0.281 + 0.281*0.2*speedboost) {
+            if (deltadeltaH >= 0.4 + 0.281*0.2*speedboost) {
                 fail(p, FailType.A, "ddH: " + deltadeltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
             }
         } else {
-            if(deltadeltaH >= 0.35 + 0.35*0.2*speedboost) {
+            if(deltadeltaH >= 0.4 + 0.35*0.2*speedboost) {
                 fail(p, FailType.AA, "ddH: " + deltadeltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
             }
         }

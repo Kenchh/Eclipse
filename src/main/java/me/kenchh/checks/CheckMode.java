@@ -25,7 +25,7 @@ public abstract class CheckMode {
         return null;
     }
 
-    public boolean isIgnored(Check check) {
+    public boolean isDefault(Check check) {
         if(customchecks.containsKey(check)) {
             return false;
         }

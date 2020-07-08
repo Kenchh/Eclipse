@@ -6,6 +6,7 @@ import me.kenchh.checks.interfaces.Movement;
 import me.kenchh.data.DataProfile;
 import me.kenchh.data.DataProfileManager;
 import me.kenchh.utils.MathUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -62,8 +63,13 @@ public class MoveEvent implements Listener {
         double deltadeltaH = MathUtils.round(deltaH - dp.lastDeltaH);
 
         for(Check c : CheckManager.checks) {
+
+            if(dp.ignoredChecks.containsKey(c)) {
+                continue;
+            }
+
             if(c instanceof Movement) {
-                if(dp.currentCheckMode == null || dp.currentCheckMode.isIgnored(c)) {
+                if(dp.currentCheckMode == null || dp.currentCheckMode.isDefault(c)) {
                     ((Movement) c).move(e, dp, e.getPlayer(), deltaY, deltaH, deltadeltaY, deltadeltaH);
                 } else {
                     ((Movement) dp.currentCheckMode.getCustomCheck(c)).move(e, dp, e.getPlayer(), deltaY, deltaH, deltadeltaY, deltadeltaH);
