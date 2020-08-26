@@ -25,7 +25,8 @@ public class EclipseCMD implements CommandExecutor {
             }
 
             if(args.length == 0) {
-                p.sendMessage(Eclipse.prefix + "by Kenchh - Type " + ChatColor.GOLD + "/eclipse help" + ChatColor.YELLOW + " for help");
+                p.sendMessage(Eclipse.prefix + "Eclipse AntiCheat v" + getClass().getPackage().getImplementationVersion());
+                p.sendMessage(Eclipse.prefix + "Type " + ChatColor.GOLD + "/eclipse help" + ChatColor.YELLOW + " for help");
                 return true;
             }
 
@@ -33,6 +34,15 @@ public class EclipseCMD implements CommandExecutor {
                 if(args[0].equalsIgnoreCase("help")) {
                     help(p);
                     return true;
+                }
+
+                if(args[0].equalsIgnoreCase("alerts")) {
+                    DataProfileManager.getDataProfile(p).alerts = !DataProfileManager.getDataProfile(p).alerts;
+                    if(DataProfileManager.getDataProfile(p).alerts) {
+                        p.sendMessage(Eclipse.prefix + "Alerts " + ChatColor.GREEN + "on.");
+                        return true;
+                    }
+                    p.sendMessage(Eclipse.prefix + "Alerts " + ChatColor.RED + "off.");
                 }
 
                 if(args[0].equalsIgnoreCase("checkVL") || args[0].equalsIgnoreCase("check")) {
@@ -45,13 +55,8 @@ public class EclipseCMD implements CommandExecutor {
                     return true;
                 }
 
-                if(args[0].equalsIgnoreCase("checkdebug")) {
-                    p.sendMessage(Eclipse.prefix + "Please enter a valid check to debug.");
-                    return true;
-                }
-
-                if(args[0].equalsIgnoreCase("faildebug")) {
-                    p.sendMessage(Eclipse.prefix + "Please enter a valid check to debug.");
+                if(args[0].equalsIgnoreCase("debug")) {
+                    Eclipse.getInstance().debug = !Eclipse.getInstance().debug;
                     return true;
                 }
 
@@ -96,22 +101,8 @@ public class EclipseCMD implements CommandExecutor {
                     Check c = CheckManager.getCheck(checkname);
 
                     if(c != null) {
-                        c.toggleCheckDebug();
+                        c.checkdebug = !c.checkdebug;
                         p.sendMessage(Eclipse.prefix + "Check Debug mode:" + ChatColor.GOLD + " " + c.name + " - " + c.checkdebug);
-                    } else {
-                        p.sendMessage(Eclipse.prefix + "Please enter a valid check to debug.");
-                    }
-                    return true;
-                }
-
-                if(args[0].equalsIgnoreCase("faildebug")) {
-                    String checkname = args[1];
-
-                    Check c = CheckManager.getCheck(checkname);
-
-                    if(c != null) {
-                        c.toggleFailDebug();
-                        p.sendMessage(Eclipse.prefix + "Fail Debug mode:" + ChatColor.GOLD + " " + c.name + " - " + c.faildebug);
                     } else {
                         p.sendMessage(Eclipse.prefix + "Please enter a valid check to debug.");
                     }
@@ -173,9 +164,9 @@ public class EclipseCMD implements CommandExecutor {
     }
 
     public void help(Player p) {
+        p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse alerts " + ChatColor.YELLOW + "- Toggle your alerts.");
+        p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse debug" + ChatColor.YELLOW + "- Toggle receiving debug-data when failing a check.");
         p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse check <player> " + ChatColor.YELLOW + "- Lookup a players VL for all checks.");
-        p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse checkDebug <check> " + ChatColor.YELLOW + "- Toggle receiving debug-data during a check.");
-        p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse failDebug <check> " + ChatColor.YELLOW + "- Toggle receiving debug-data when failing a check.");
         p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse setCheckMode <player> <check> " + ChatColor.YELLOW + "- Switch the check-mode for a player.");
         p.sendMessage(Eclipse.prefix + ChatColor.RED + "/eclipse ignorecheck <player> <check> <duration> " + ChatColor.YELLOW + "- Make a player ignore a specific check.");
     }

@@ -1,9 +1,7 @@
 package me.kenchh.checks;
 
-import me.kenchh.checks.cheatchecks.movement.Fly;
-import me.kenchh.checks.cheatchecks.movement.GroundSpoof;
-import me.kenchh.checks.cheatchecks.movement.Motion;
-import me.kenchh.checks.cheatchecks.movement.Speed;
+import me.kenchh.checks.cheatchecks.movement.*;
+import me.kenchh.checks.cheatchecks.player.TooManyPackets;
 import me.kenchh.customchecks.leap.Leap;
 
 import java.util.ArrayList;
@@ -18,6 +16,9 @@ public class CheckManager {
         checks.add(new Motion());
         checks.add(new GroundSpoof());
         checks.add(new Speed());
+        checks.add(new Jesus());
+
+        checks.add(new TooManyPackets());
     }
 
     public static void initCheckModes() {

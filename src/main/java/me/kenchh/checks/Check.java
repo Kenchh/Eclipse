@@ -7,6 +7,7 @@ import me.kenchh.checks.fails.FailProfile;
 import me.kenchh.checks.fails.FailProfileManager;
 import me.kenchh.checks.fails.FailType;
 import me.kenchh.data.DataProfileManager;
+import me.kenchh.main.Eclipse;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -15,27 +16,21 @@ public abstract class Check implements Listener {
 
     public String name;
     public CheatCategory cheat;
+
+    public boolean punish = false;
+    public int punishThreshold = 20;
+
     public boolean checkdebug = false;
-    public boolean faildebug = false;
 
     public Check(String name, CheatCategory cheat) {
         this.name = name;
         this.cheat = cheat;
     }
 
-    public void toggleCheckDebug() {
-        checkdebug = !checkdebug;
-    }
-    public void toggleFailDebug() {
-        faildebug = !faildebug;
-    }
-
     /** Used to add +1 VL to a player fail. */
     public void fail(Player player, FailType type, String debugmsg)  {
         fail(player, 1, type, debugmsg);
     }
-
-    public int punishThreshold = 20;
 
     /** Used to add a specific amount of VL */
     public void fail(Player player, int VL, FailType type, String debugmsg) {
@@ -71,17 +66,18 @@ public abstract class Check implements Listener {
         Fail newfail = new Fail(c, lastVL + VL, type);
         fp.addFail(newfail);
 
-        if(newfail.VL < punishThreshold) {
-            AlertManager.alert(player, newfail, debugmsg);
+
+        if(newfail.VL < punishThreshold || !punish) {
+            Eclipse.getInstance().getAlertManager().alert(player, newfail, debugmsg);
         } else {
             /** punish */
             punish(player, c);
-            AlertManager.alertKick(player, newfail);
+            Eclipse.getInstance().getAlertManager().alertPunish(player, newfail);
         }
 
     }
 
-    /** Put here what you want to happen, if a player has failed to many times. */
+    /** Put here what you want to happen, if a player has failed too many times. */
     private void punish(Player player, Check check) {
         player.kickPlayer("You have been kicked for failing " + check.name + " too many times!");
     }

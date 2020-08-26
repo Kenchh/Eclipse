@@ -9,7 +9,6 @@ import me.kenchh.data.DataProfileManager;
 import me.kenchh.main.Eclipse;
 import me.kenchh.packet.PacketListener;
 import me.kenchh.utils.LocationUtils;
-import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -43,7 +42,7 @@ public class GroundSpoof extends Check implements Movement {
         }
 
         /** A: When custom on Ground check and isOnGround doesnt match for a period of time */
-        if(p.isOnGround() != dp.onGround() && LocationUtils.blocksAroundAir(p) && dp.cAirticks > 7 && LocationUtils.couldBeOnGround(p) == false) {
+        if(p.isOnGround() != dp.onGround() && LocationUtils.blocksAroundAir(p) && dp.cAirticks > 15 && !LocationUtils.couldBeOnGround(p)) {
             fail(p, FailType.A, "oG: " + p.isOnGround() + " coG: " + dp.onGround());
         }
 

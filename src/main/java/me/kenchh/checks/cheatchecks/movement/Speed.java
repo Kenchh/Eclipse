@@ -7,13 +7,17 @@ import me.kenchh.checks.interfaces.Movement;
 import me.kenchh.data.DataProfile;
 import me.kenchh.data.DataProfileManager;
 import me.kenchh.main.Eclipse;
+import me.kenchh.packet.PacketListener;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class Speed extends Check implements Movement {
+import java.util.HashMap;
+
+public class Speed extends Check implements Movement, PacketListener {
     public Speed() {
         super("Speed", CheatCategory.MOVEMENT);
     }
@@ -21,6 +25,10 @@ public class Speed extends Check implements Movement {
     @Override
     public void fail(Player player, FailType type, String debugmsg) {
         super.fail(player, type, debugmsg);
+
+        if(type == FailType.D) {
+            return;
+        }
 
         DataProfile dp = DataProfileManager.getDataProfile(player);
 
@@ -42,16 +50,26 @@ public class Speed extends Check implements Movement {
         }
 
         double speedboost = 0;
-        for(PotionEffect pe : p.getActivePotionEffects()) {
-            if(pe.getType().getName() == PotionEffectType.SPEED.getName()) {
-                speedboost = pe.getAmplifier() + 1;
+
+        if(p.getWalkSpeed() > 0.2) {
+            speedboost+=(p.getWalkSpeed()-0.2)/0.02;
+            if(p.isSprinting()) {
+                speedboost+=((p.getWalkSpeed()-0.2)/0.02) * 0.3;
             }
         }
 
-        /**
-         * These checks are EXPERIMENTAL and might false flag.
-         */
+        for(PotionEffect pe : p.getActivePotionEffects()) {
+            if(pe.getType().getName() == PotionEffectType.SPEED.getName()) {
+                speedboost += pe.getAmplifier() + 1;
+            }
+        }
 
+
+        if(dp.hurtticks != 0) {
+            return;
+        }
+
+        /** A & AA **/
         if(p.isOnGround() && dp.vanillaOnGroundTicks >= 3) {
             if (deltadeltaH >= 0.4 + 0.281*0.2*speedboost) {
                 fail(p, FailType.A, "ddH: " + deltadeltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
@@ -64,10 +82,8 @@ public class Speed extends Check implements Movement {
 
 
         /** B: */
-        if(p.isOnGround() && dp.vanillaOnGroundTicks >= 3 && deltaY == 0) {
-            if(deltaH >= 0.325 + 0.325*0.2*speedboost) {
-                fail(p, FailType.B, "dH: " + deltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
-            }
+        if(deltaH >= 0.62 + 0.325*0.2*speedboost) {
+            fail(p, FailType.B, "dH: " + deltaH + " voGT: " + dp.vanillaOnGroundTicks + " oG: " + p.isOnGround());
         }
 
 
@@ -75,6 +91,34 @@ public class Speed extends Check implements Movement {
             p.sendMessage(Eclipse.prefix + "dH: " + deltaH);
             p.sendMessage(Eclipse.prefix + "ddH: " + deltadeltaH);
             p.sendMessage(Eclipse.prefix + "voGT: " + dp.vanillaOnGroundTicks);
+        }
+    }
+
+    @Override
+    public void readPacket(Player p, Object packet) {
+
+        DataProfile dp = DataProfileManager.getDataProfile(p);
+
+        if(System.currentTimeMillis() - dp.timerLastMillis >= 1000) {
+            dp.speedPackets = 0;
+        }
+
+        String[] moves = {"PacketPlayInPosition", "PacketPlayInPositionLook"};
+
+        boolean isPacket = false;
+
+        for(String s : moves) {
+            if(packet.getClass().getSimpleName().equalsIgnoreCase(s)) {
+                isPacket = true;
+                break;
+            }
+        }
+
+        if(isPacket)
+            dp.speedPackets++;
+
+        if(dp.speedPackets > 26) {
+            fail(p, FailType.D, "p: " + dp.speedPackets);
         }
     }
 }

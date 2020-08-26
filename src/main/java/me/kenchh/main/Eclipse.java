@@ -10,7 +10,9 @@ import me.kenchh.data.DataProfileManager;
 import me.kenchh.events.JoinEvent;
 import me.kenchh.events.LeaveEvent;
 import me.kenchh.events.MoveEvent;
+import me.kenchh.events.PlayerDamage;
 import me.kenchh.packet.PacketInjector;
+import me.kenchh.utils.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,17 +22,23 @@ public class Eclipse extends JavaPlugin {
 
     public static String prefix = ChatColor.GOLD + "" + ChatColor.BOLD + "ECLIPSE > " + ChatColor.RESET + ChatColor.GRAY;
     private static Eclipse instance;
-
+    private static AlertManager alertmanager;
     private static PacketInjector injector;
     public API api;
 
+    public boolean debug;
+
     @Override
     public void onEnable() {
+
         System.out.println("Eclipse >> Anticheat Started!");
         instance = this;
 
         this.injector = new PacketInjector();
+        this.alertmanager = new AlertManager();
         this.api = new API();
+
+        new LocationUtils();
 
         CheckManager.initChecks();
         CheckManager.initCheckModes();
@@ -44,6 +52,7 @@ public class Eclipse extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MoveEvent(), this);
         Bukkit.getPluginManager().registerEvents(new JoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new LeaveEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDamage(), this);
 
         Bukkit.getPluginCommand("eclipse").setExecutor(new EclipseCMD());
 
@@ -55,10 +64,11 @@ public class Eclipse extends JavaPlugin {
             @Override
             public void run() {
 
-                AlertManager.updateCooldown();
+                alertmanager.updateCooldown();
                 for(DataProfile dp : DataProfileManager.dataProfiles) {
                     dp.updatecheckModeDuration();
                     dp.updateIgnoreCheckDuration();
+                    dp.updateHurtTicks();
                 }
             }
         }, 1L, 1L);
@@ -71,6 +81,10 @@ public class Eclipse extends JavaPlugin {
 
     public static PacketInjector getPacketInjector() {
         return injector;
+    }
+
+    public static AlertManager getAlertManager() {
+        return alertmanager;
     }
 
 }

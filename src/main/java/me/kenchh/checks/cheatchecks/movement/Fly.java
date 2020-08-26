@@ -8,6 +8,7 @@ import me.kenchh.data.DataProfile;
 import me.kenchh.data.DataProfileManager;
 import me.kenchh.main.Eclipse;
 import me.kenchh.utils.ConnectionUtils;
+import me.kenchh.utils.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -55,15 +56,15 @@ public class Fly extends Check implements Movement {
             }
         }
 
-        if(!dp.onGround() || !p.isOnGround()) {
+        if((!dp.onGround() || !p.isOnGround()) && LocationUtils.inAir(p)) {
 
             if(!dp.onGround() && p.isOnGround()) {
                 dp.airticks = dp.cAirticks;
             }
 
             /** B: Non complex code, just flags if movement is very rapid and unusual. */
-            if (deltaY >= 0.5 + jumpboost/10 && dp.airticks >= 3) {
-                fail(p, FailType.B, "dY: " + deltaY);
+            if (deltaY >= 0.5 + jumpboost/10 && dp.hurtticks == 0 && dp.airticks >= 2) {
+                fail(p, FailType.B, "hT: " + dp.hurtticks + " aT: " + dp.airticks + " dY: " + deltaY);
             }
 
             /** D: Fails, if players deltaY is above a specific value and has barely changed compared to last tick. */
@@ -90,8 +91,14 @@ public class Fly extends Check implements Movement {
                 }
             }
 
-            if (deltaY >= 0.0 && dp.airticks >= AA_maxairticks) {
-                fail(p, FailType.AA, "dY: " + deltaY + " " + "aT: " + dp.airticks);
+            if (deltaY >= 0.0 || deltadeltaY - dp.lastDeltaDeltaY >= 1.5 || deltadeltaY - dp.lastDeltaDeltaY <= -1.5) {
+                if(dp.AAairticks >= AA_maxairticks) {
+                    fail(p, FailType.AA, "dY: " + deltaY + " " + "aT: " + dp.airticks);
+                } else {
+                    dp.AAairticks++;
+                }
+            } else {
+                dp.AAairticks = 0;
             }
 
             /** C: Fails, when X or Z changes while deltaY is 0. **/
@@ -112,12 +119,13 @@ public class Fly extends Check implements Movement {
             }
 
             /** A: Checks if player is moving while ddY is 0 (basically almost impossible to reproduce legit) */
-            if(deltadeltaY == 0 && dp.airticks > 3) {
+            if(deltadeltaY == 0 && dp.airticks > 3 && dp.hurtticks == 0) {
                 fail(p, FailType.A, "aT: " + dp.airticks);
             }
 
         } else {
             dp.lastLocationOnGround = p.getLocation();
+            dp.AAairticks = 0;
         }
 
         if(checkDebugAllowed(p)) {

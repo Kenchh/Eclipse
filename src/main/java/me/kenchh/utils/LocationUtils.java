@@ -29,6 +29,13 @@ public class LocationUtils {
         return b;
     }
 
+    public static Block getBlockAbove(Player player, double plusy) {
+        Location loc = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() - plusy, player.getLocation().getZ());
+        Block b = player.getWorld().getBlockAt(loc);
+
+        return b;
+    }
+
     public static Block[] getBlocksAround(Player player, double minusy) {
 
         Block[] blocksaround = new Block[8];
@@ -77,7 +84,7 @@ public class LocationUtils {
     public static boolean isAir(Location loc) {
         Material type = loc.getBlock().getType();
         if(type.isSolid() == false && loc.getBlock().isLiquid() == false &&
-                type != Material.LADDER && type != Material.VINE && type != Material.WEB && type != Material.SNOW && type != Material.CARPET) {
+                type != Material.LADDER && type != Material.VINE && type != Material.WEB && type != Material.SNOW && !type.toString().contains("CARPET")) {
             return true;
         }
         return false;
@@ -105,6 +112,10 @@ public class LocationUtils {
         return false;
     }
 
+    public static boolean isLadder(Location loc) {
+        return loc.getBlock().getType() == Material.LADDER || loc.getBlock().getType() == Material.VINE;
+    }
+
     public static Location highestLocation(Player player) {
         double blockY = player.getLocation().getBlockY();
 
@@ -119,6 +130,67 @@ public class LocationUtils {
         }
 
         return tplocation;
+    }
+
+    public static Block[] getBlocksInHitbox(Player player, double minusy) {
+
+        Block[] blocksaround = new Block[8];
+
+        Block locXP = new Location(player.getWorld(), player.getLocation().getX() + 0.3, player.getLocation().getY() - minusy, player.getLocation().getZ()).getBlock();
+        Block locXM = new Location(player.getWorld(), player.getLocation().getX() - 0.3, player.getLocation().getY() - minusy, player.getLocation().getZ()).getBlock();
+        Block locZP = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() - minusy, player.getLocation().getZ() + 0.3).getBlock();
+        Block locZM = new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() - minusy, player.getLocation().getZ() - 0.3).getBlock();
+
+        Block locXPZP = new Location(player.getWorld(), player.getLocation().getX() + 0.3, player.getLocation().getY() - minusy, player.getLocation().getZ() + 0.3).getBlock();
+        Block locXPZM = new Location(player.getWorld(), player.getLocation().getX() + 0.3, player.getLocation().getY() - minusy, player.getLocation().getZ() - 0.3).getBlock();
+        Block locXMZP = new Location(player.getWorld(), player.getLocation().getX() - 0.3, player.getLocation().getY() - minusy, player.getLocation().getZ() + 0.3).getBlock();
+        Block locXMZM = new Location(player.getWorld(), player.getLocation().getX() - 0.3, player.getLocation().getY() - minusy, player.getLocation().getZ() - 0.3).getBlock();
+
+        blocksaround[0] = locXP;
+        blocksaround[1] = locXM;
+        blocksaround[2] = locZP;
+        blocksaround[3] = locZM;
+
+        blocksaround[4] = locXPZP;
+        blocksaround[5] = locXPZM;
+        blocksaround[6] = locXMZP;
+        blocksaround[7] = locXMZM;
+
+        return blocksaround;
+    }
+
+    public static boolean inLiquid(Player p) {
+        for(Block b : getBlocksInHitbox(p, 0)) {
+            if (b.isLiquid()) {
+                return true;
+            }
+        }
+        for(Block b : getBlocksInHitbox(p, -1)) {
+            if (b.isLiquid()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean inBlock(Player p, Material type) {
+        for(Block bh : getBlocksInHitbox(p, 0)) {
+            if (bh.getType() == type) {
+                return true;
+            }
+        }
+        for(Block bh : getBlocksInHitbox(p, -1)) {
+            if (bh.getType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean inAir(Player p) {
+
+        return !LocationUtils.isLadder(p.getLocation()) && !p.getLocation().getBlock().isLiquid() && !LocationUtils.getBlockAbove(p, 1).isLiquid()
+                && !inLiquid(p) && !inBlock(p, Material.WEB);
     }
 
 }

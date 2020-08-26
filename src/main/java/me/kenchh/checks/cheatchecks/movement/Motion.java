@@ -55,17 +55,17 @@ public class Motion extends Check implements Movement {
         }
 
         /** B: Checks if this wrong deltaY occurs at a wrong time when the player is in the air **/
-        int B_maxairticks = 3;
+        int A_maxairticks = 3;
         if (ConnectionUtils.getPing(p) >= 60) {
             if(ConnectionUtils.getPing(p) < 250) {
-                B_maxairticks = B_maxairticks * ConnectionUtils.getPing(p) / 60;
+                A_maxairticks = A_maxairticks * ConnectionUtils.getPing(p) / 60;
             } else {
-                B_maxairticks = B_maxairticks * 250 / 60;
+                A_maxairticks = A_maxairticks * 250 / 60;
             }
         }
 
-        if (deltaY > 0.45D + jumpboost/10 && dp.cAirticks > B_maxairticks + jumpboost) {
-            fail(p, FailType.B, "dY: " + deltaY + " " + "aT: " + dp.cAirticks);
+        if (deltaY > 0.45D + jumpboost/10 && dp.cAirticks > A_maxairticks + jumpboost) {
+            fail(p, FailType.A, "dY: " + deltaY + " " + "aT: " + dp.cAirticks);
         }
 
         if(checkDebugAllowed(p)) {

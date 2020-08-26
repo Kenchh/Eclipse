@@ -14,56 +14,54 @@ import java.util.Set;
 
 public class AlertManager {
 
-    public static String message = Eclipse.prefix + ChatColor.YELLOW + "%player%" + ChatColor.GRAY + " has failed " + ChatColor.YELLOW + "%check% (%type%) " + ChatColor.RED + "VL: %vl%";
-    public static String messageCM = ChatColor.GRAY + " while " + ChatColor.YELLOW + "%checkmode%";
+    public String message = Eclipse.prefix + ChatColor.YELLOW + "%player%" + ChatColor.GRAY + " has failed " + ChatColor.YELLOW + "%check% (%type%) " + ChatColor.RED + "VL: %vl%";
+    public String messageCM = ChatColor.GRAY + " while " + ChatColor.YELLOW + "%checkmode%";
 
-    public static HashMap<String, Long> cooldown = new HashMap<String, Long>();
+    public HashMap<String, Long> delay = new HashMap<String, Long>();
 
-    public static void updateCooldown() {
-        Set<String> pnames = AlertManager.cooldown.keySet();
+    public final long alertDelay = 1;
+
+    public void updateCooldown() {
+        Set<String> pnames = delay.keySet();
 
         for(String pname : pnames) {
             Player p = Bukkit.getPlayer(pname);
             if(p == null) {
-                AlertManager.cooldown.remove(pname);
+                delay.remove(pname);
                 continue;
             }
 
-            long then = AlertManager.cooldown.get(pname);
+            long then = delay.get(pname);
             long now = System.currentTimeMillis();
 
             long dt = now - then;
 
-            long dtInSeconds = dt / 300;
+            long dtInSeconds = dt / 1000;
 
-            if(dtInSeconds >= 1) {
-                AlertManager.cooldown.remove(pname);
+            if(dtInSeconds >= alertDelay) {
+                delay.remove(pname);
             }
         }
     }
 
-    public static void alert(Player player, Fail fail, String debugmsg) {
+    /* Alerts, when a player fails a check. */
+    public void alert(Player player, Fail fail, String debugmsg) {
 
-        if(cooldown.containsKey(player.getName()))
+        if(delay.containsKey(player.getName()))
             return;
 
         sendAlert(player, fail);
         sendDebugMessage("ping: " + ConnectionUtils.getPing(player) + "ms " + debugmsg);
-        cooldown.put(player.getName(), System.currentTimeMillis());
+        delay.put(player.getName(), System.currentTimeMillis());
 
     }
 
-    public static void alertKick(Player player, Fail fail) {
-
-        if(cooldown.containsKey(player.getName()))
-            return;
-
+    /* Alerts, when a player has failed a check too many times. */
+    public void alertPunish(Player player, Fail fail) {
         sendKickAlert(player, fail);
-        cooldown.put(player.getName(), System.currentTimeMillis());
-
     }
 
-    public static void sendDebugMessage(String debugmsg) {
+    public void sendDebugMessage(String debugmsg) {
 
         for(Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("eclipse.alerts")) {
@@ -73,26 +71,29 @@ public class AlertManager {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GRAY + debugmsg);
     }
 
-    public static void sendAlert(Player player, Fail fail) {
+    private void sendAlert(Player player, Fail fail) {
         DataProfile dp = DataProfileManager.getDataProfile(player);
 
-        String msg = AlertManager.message;
+        String msg = message;
         msg = msg.replace("%player%", player.getName());
         msg = msg.replace("%check%", fail.check.name);
         msg = msg.replace("%type%", fail.type.toString());
         msg = msg.replace("%vl%", "" + fail.VL);
 
-        String messageCM = AlertManager.messageCM;
+        String msgCM = messageCM;
 
         /* Player Staff Message */
-        for(Player p : Bukkit.getOnlinePlayers()) {
-            if(p.hasPermission("eclipse.alerts")) {
+        for(Player staffmember : Bukkit.getOnlinePlayers()) {
+            if(staffmember.hasPermission("eclipse.alerts")) {
+
+                if(!DataProfileManager.getDataProfile(player).alerts)
+                    continue;
 
                 if(dp.currentCheckMode == null) {
-                    p.sendMessage(msg);
+                    staffmember.sendMessage(msg);
                 } else {
-                    messageCM = messageCM.replace("%checkmode%", dp.currentCheckMode.name);
-                    p.sendMessage(msg + messageCM);
+                    msgCM = msgCM.replace("%checkmode%", dp.currentCheckMode.name);
+                    staffmember.sendMessage(msg + msgCM);
                 }
             }
         }
@@ -101,16 +102,16 @@ public class AlertManager {
         if(dp.currentCheckMode == null) {
             Bukkit.getConsoleSender().sendMessage(msg);
         } else {
-            Bukkit.getConsoleSender().sendMessage(msg + messageCM);
+            Bukkit.getConsoleSender().sendMessage(msg + msgCM);
         }
     }
 
-    public static void sendKickAlert(Player player, Fail fail) {
+    private void sendKickAlert(Player player, Fail fail) {
 
         /* Player Staff Message */
-        for(Player p : Bukkit.getOnlinePlayers()) {
-            if(p.hasPermission("eclipse.alerts")) {
-                p.sendMessage(ChatColor.RED + player.getName() + " has been removed for failing " + fail.check.name + " too many times!");
+        for(Player staffmember : Bukkit.getOnlinePlayers()) {
+            if(staffmember.hasPermission("eclipse.alerts")) {
+                staffmember.sendMessage(ChatColor.RED + player.getName() + " has been removed for failing " + fail.check.name + " too many times!");
             }
         }
 

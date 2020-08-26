@@ -24,6 +24,8 @@ public class DataProfile {
     public int airticks = 0; /** Time in air */
     public int cAirticks = 0; /** Time in air - Custom */
 
+    public int AAairticks = 0;
+
     public int vanillaOnGroundTicks = 0;
     public boolean lastVanillaOnGround;
 
@@ -41,7 +43,15 @@ public class DataProfile {
 
     public int speedticks = 0;
 
+    public long timerLastMillis = System.currentTimeMillis();
+    public int timerPackets;
+    public int speedPackets;
+
+    public int hurtticks;
+
     public HashMap<Check, Double> ignoredChecks = new HashMap<>();
+
+    public boolean alerts = true;
 
     public DataProfile(Player player) {
         this.player = player;
@@ -97,6 +107,10 @@ public class DataProfile {
                 ignoredChecks.remove(c);
             }
         }
+    }
+
+    public void updateHurtTicks() {
+        if(hurtticks > 0) hurtticks--;
     }
 
 }
